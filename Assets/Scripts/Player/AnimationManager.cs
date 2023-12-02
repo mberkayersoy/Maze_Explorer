@@ -12,6 +12,9 @@ public class AnimationManager : MonoBehaviour
     private int animIDJump;
     private int animIDGrounded;
     private int animIDFreeFall;
+    private int animIDIsThirdPerson;
+    private int animIDVertical;
+    private int animdIDHorizontal;
 
     private void Awake()
     {
@@ -26,8 +29,20 @@ public class AnimationManager : MonoBehaviour
         playerMovement.OnGroundStateChangeAction += PlayerMovement_OnGroundStateChangeAction;
         playerMovement.OnJumpAction += PlayerMovement_OnJumpAction;
         playerMovement.OnFreeFallAction += PlayerMovement_OnFreeFallAction;
+        playerMovement.OnCameraChangeAction += PlayerMovement_OnCameraChangeAction;
+        playerMovement.OnMoveDirectionAction += PlayerMovement_OnMoveDirectionAction;
     }
 
+    private void PlayerMovement_OnMoveDirectionAction(Vector2 moveDirection, float currentSpeed)
+    {
+        animator.SetFloat(animIDVertical, moveDirection.y * currentSpeed * Time.deltaTime);
+        animator.SetFloat(animdIDHorizontal, moveDirection.x * currentSpeed * Time.deltaTime);
+    }
+
+    private void PlayerMovement_OnCameraChangeAction(bool isThirdPerson)
+    {
+        animator.SetBool(animIDIsThirdPerson, isThirdPerson);
+    }
 
     private void PlayerMovement_OnFreeFallAction(bool isFreeFall)
     {
@@ -54,6 +69,9 @@ public class AnimationManager : MonoBehaviour
         animIDJump = Animator.StringToHash("Jump");
         animIDGrounded = Animator.StringToHash("Grounded");
         animIDFreeFall = Animator.StringToHash("FreeFall");
+        animIDIsThirdPerson = Animator.StringToHash("IsThirdPerson");
+        animIDVertical = Animator.StringToHash("Vertical");
+        animdIDHorizontal = Animator.StringToHash("Horizontal");
 
     }
 

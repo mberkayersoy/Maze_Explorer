@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,12 +11,15 @@ public class PlayerInputHandler : MonoBehaviour
     public Vector2 look;
     public bool jump;
     public bool sprint;
+    public bool isThirdPerson = true;
 
     [Header("Mouse Cursor Settings")]
     public bool cursorLocked = true;
     public bool cursorInputForLook = true;
 
     PlayerInputActions playerInputActions;
+
+    public event Action<bool> OnCameraSwitchAction;
 
     private void Awake()
     {
@@ -29,8 +33,22 @@ public class PlayerInputHandler : MonoBehaviour
         playerInputActions.Player.MouseDelta.canceled += MouseDelta_performed;
         playerInputActions.Player.Jump.performed += Jump_performed;
         playerInputActions.Player.Sprint.performed += Sprint_performed;
+        playerInputActions.Player.CameraSwitch.performed += CameraSwitch_performed;
     }
 
+    private void CameraSwitch_performed(InputAction.CallbackContext callback)
+    {
+        if (isThirdPerson) 
+        {
+            OnCameraSwitchAction?.Invoke(!callback.ReadValueAsButton());
+            isThirdPerson = false;
+        }
+        else
+        {
+            OnCameraSwitchAction?.Invoke(callback.ReadValueAsButton());
+            isThirdPerson = true;
+        }
+    }
 
     private void Sprint_performed(InputAction.CallbackContext callback)
     {
@@ -40,6 +58,7 @@ public class PlayerInputHandler : MonoBehaviour
     private void MouseDelta_performed(InputAction.CallbackContext callback)
     {
         look = callback.ReadValue<Vector2>();
+        EventBus.Publish(new OnMouseDeltaEvent(look));
     }
 
     private void Jump_performed(InputAction.CallbackContext callback)
