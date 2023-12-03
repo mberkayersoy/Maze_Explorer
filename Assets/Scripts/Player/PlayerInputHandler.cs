@@ -19,7 +19,7 @@ public class PlayerInputHandler : MonoBehaviour
 
     PlayerInputActions playerInputActions;
 
-    public event Action<bool> OnCameraSwitchAction;
+    public event Action OnCameraSwitchAction;
 
     private void Awake()
     {
@@ -38,16 +38,7 @@ public class PlayerInputHandler : MonoBehaviour
 
     private void CameraSwitch_performed(InputAction.CallbackContext callback)
     {
-        if (isThirdPerson) 
-        {
-            OnCameraSwitchAction?.Invoke(!callback.ReadValueAsButton());
-            isThirdPerson = false;
-        }
-        else
-        {
-            OnCameraSwitchAction?.Invoke(callback.ReadValueAsButton());
-            isThirdPerson = true;
-        }
+        OnCameraSwitchAction?.Invoke();
     }
 
     private void Sprint_performed(InputAction.CallbackContext callback)
