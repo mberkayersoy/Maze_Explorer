@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
 
 public class PlayerInputHandler : MonoBehaviour
 {
@@ -12,10 +13,6 @@ public class PlayerInputHandler : MonoBehaviour
     public bool jump;
     public bool sprint;
     public bool isThirdPerson = true;
-
-    [Header("Mouse Cursor Settings")]
-    public bool cursorLocked = true;
-    public bool cursorInputForLook = true;
 
     PlayerInputActions playerInputActions;
 
@@ -34,6 +31,11 @@ public class PlayerInputHandler : MonoBehaviour
         playerInputActions.Player.Jump.performed += Jump_performed;
         playerInputActions.Player.Sprint.performed += Sprint_performed;
         playerInputActions.Player.CameraSwitch.performed += CameraSwitch_performed;
+
+    }
+    private void Start()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void CameraSwitch_performed(InputAction.CallbackContext callback)
@@ -60,16 +62,6 @@ public class PlayerInputHandler : MonoBehaviour
     private void Move_performed(InputAction.CallbackContext callback)
     {
         move = callback.ReadValue<Vector2>();
-    }
-
-    private void OnApplicationFocus(bool hasFocus)
-    {
-        SetCursorState(cursorLocked);
-    }
-
-    private void SetCursorState(bool newState)
-    {
-        Cursor.lockState = newState ? CursorLockMode.Locked : CursorLockMode.None;
     }
 
     private void OnDestroy()

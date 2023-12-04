@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -14,6 +12,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float JumpTimeout = 0.50f;
     [SerializeField] private float smoothRotation;
     [SerializeField] private bool isThirdPerson;
+    [SerializeField] private bool isDead = false;
 
     private float targetRotation = 0.0f;
     private float rotationVelocity;
@@ -22,10 +21,12 @@ public class PlayerController : MonoBehaviour
     private float jumpTimeoutDelta;
     private Rigidbody rb;
     private GroundCheck groundCheck;
+    private PlayerDeadHandler playerDeadHandler;
     private PlayerInputHandler input;
 
-    [SerializeField] Transform thirdPersonCamera;
-    [SerializeField] Transform firstPersonCamera;
+
+    [SerializeField] private Transform thirdPersonCamera;
+    [SerializeField] private Transform firstPersonCamera;
 
     //Events
     public event Action<float> OnSpeedChangeAction;
@@ -40,16 +41,23 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         groundCheck = GetComponent<GroundCheck>();
         input = GetComponent<PlayerInputHandler>();
+        playerDeadHandler = GetComponent<PlayerDeadHandler>();
     }
-
     private void Start()
     {
         // subscribe events
         groundCheck.OnIsGroundedChangeAction += GroundCheck_OnIsGroundedChangeAction;
         input.OnCameraSwitchAction += Input_OnCameraSwitchAction;
+        EventBus.Subscribe<OnPlayerDeadEvent>(SetPlayerDead);
 
         // reset timeouts on start
         jumpTimeoutDelta = JumpTimeout;
+        Input_OnCameraSwitchAction();
+    }
+
+    private void SetPlayerDead(OnPlayerDeadEvent onPlayerActive)
+    {
+        isDead = onPlayerActive.IsDead;
     }
 
     private void GroundCheck_OnIsGroundedChangeAction(bool isGrounded)
@@ -60,13 +68,19 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        HandleMovement();
-        Jump();
+        if (!isDead)
+        {
+            HandleMovement();
+            Jump();
+        }
     }
 
     private void FixedUpdate()
     {
-        Move();
+        if (!isDead)
+        {
+            Move();
+        }
     }
 
     private void HandleMovement()
@@ -83,7 +97,6 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            // If currentSpeed is greater than the speedOffset, reduce it, otherwise set it directly to 0
             currentSpeed = currentSpeed > speedOffset
                 ? Mathf.Lerp(currentSpeed, 0f, Time.deltaTime * speedChangeRate)
                 : 0f;
@@ -174,6 +187,14 @@ public class PlayerController : MonoBehaviour
 
             input.jump = false;
         }
+    }
+
+
+    private void OnDestroy()
+    {
+        groundCheck.OnIsGroundedChangeAction -= GroundCheck_OnIsGroundedChangeAction;
+        input.OnCameraSwitchAction -= Input_OnCameraSwitchAction;
+        EventBus.Unsubscribe<OnPlayerDeadEvent>(SetPlayerDead);
     }
 }
 
