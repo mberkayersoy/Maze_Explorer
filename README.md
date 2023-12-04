@@ -8,6 +8,6 @@ Find the ladder inside the maze. If you touch any obstacle in the maze you will 
 
 ## Controls
 
-W,A,S,D for character control.
-Space for jump.
-Q for switch camera between third person and first person.
+*W,A,S,D for character control.
+*Space for jump.
+*Q for switch camera between third person and first person.
