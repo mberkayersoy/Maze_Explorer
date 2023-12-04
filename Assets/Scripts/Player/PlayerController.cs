@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 
-
 [RequireComponent(typeof(Rigidbody)), RequireComponent(typeof(GroundCheck))]
 public class PlayerController : MonoBehaviour
 {
@@ -9,24 +8,23 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float sprintSpeed;
     [SerializeField] private float jumpForce;
     [SerializeField] private float speedChangeRate;
-    [SerializeField] private float JumpTimeout = 0.50f;
+    [SerializeField] private float jumpTimeout = 0.50f;
     [SerializeField] private float smoothRotation;
     [SerializeField] private bool isThirdPerson;
     [SerializeField] private bool isDead = false;
+
+    [SerializeField] private Transform thirdPersonCamera;
+    [SerializeField] private Transform firstPersonCamera;
 
     private float targetRotation = 0.0f;
     private float rotationVelocity;
     private bool isGrounded;
     private float currentSpeed;
     private float jumpTimeoutDelta;
+
     private Rigidbody rb;
     private GroundCheck groundCheck;
-    private PlayerDeadHandler playerDeadHandler;
     private PlayerInputHandler input;
-
-
-    [SerializeField] private Transform thirdPersonCamera;
-    [SerializeField] private Transform firstPersonCamera;
 
     //Events
     public event Action<float> OnSpeedChangeAction;
@@ -41,7 +39,6 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         groundCheck = GetComponent<GroundCheck>();
         input = GetComponent<PlayerInputHandler>();
-        playerDeadHandler = GetComponent<PlayerDeadHandler>();
     }
     private void Start()
     {
@@ -51,7 +48,7 @@ public class PlayerController : MonoBehaviour
         EventBus.Subscribe<OnPlayerDeadEvent>(SetPlayerDead);
 
         // reset timeouts on start
-        jumpTimeoutDelta = JumpTimeout;
+        jumpTimeoutDelta = jumpTimeout;
         Input_OnCameraSwitchAction();
     }
 
@@ -178,7 +175,7 @@ public class PlayerController : MonoBehaviour
         else
         {
             // reset the jump timeout timer
-            jumpTimeoutDelta = JumpTimeout;
+            jumpTimeoutDelta = jumpTimeout;
 
             if (rb.velocity.y <= 0f)
             {

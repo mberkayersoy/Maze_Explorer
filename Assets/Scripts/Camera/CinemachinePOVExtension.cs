@@ -1,5 +1,4 @@
 using Cinemachine;
-using System;
 using UnityEngine;
 
 public class CinemachinePOVExtension : CinemachineExtension

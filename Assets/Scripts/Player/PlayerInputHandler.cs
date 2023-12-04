@@ -1,13 +1,10 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.LowLevel;
 
 public class PlayerInputHandler : MonoBehaviour
 {
-    [Header("Character Input Values")]
+    [Header("Input Values")]
     public Vector2 move;
     public Vector2 look;
     public bool jump;

@@ -1,6 +1,4 @@
-using System;
 using UnityEngine;
-using UnityEngine.Windows;
 
 public class ThirdPersonCameraController : MonoBehaviour
 {
@@ -8,21 +6,9 @@ public class ThirdPersonCameraController : MonoBehaviour
 
     private const float _threshold = 0.01f;
 
-    [Tooltip("The follow target set in the Cinemachine Virtual Camera that the camera will follow")]
-    [SerializeField] private GameObject CinemachineCameraTarget;
-
-    [Tooltip("How far in degrees can you move the camera up")]
+    [SerializeField] private GameObject cameraTarget;
     [SerializeField] private float TopClamp = 70.0f;
-
-    [Tooltip("How far in degrees can you move the camera down")]
     [SerializeField] private float BottomClamp = -30.0f;
-
-    [Tooltip("Additional degress to override the camera. Useful for fine tuning camera position when locked")]
-    [SerializeField] private float CameraAngleOverride = 0.0f;
-
-    [Tooltip("For locking the camera position on all axis")]
-    [SerializeField] private bool LockCameraPosition = false;
-
 
     // cinemachine
     private float _cinemachineTargetYaw;
@@ -35,7 +21,7 @@ public class ThirdPersonCameraController : MonoBehaviour
 
     private void Start()
     {
-        _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
+        _cinemachineTargetYaw = cameraTarget.transform.rotation.eulerAngles.y;
     }
 
     private void LateUpdate()
@@ -46,7 +32,7 @@ public class ThirdPersonCameraController : MonoBehaviour
     private void CameraRotation()
     {   
         // if there is an input and camera position is not fixed
-        if (input.look.sqrMagnitude >= _threshold && !LockCameraPosition)
+        if (input.look.sqrMagnitude >= _threshold)
         {
             _cinemachineTargetYaw += input.look.x;
             _cinemachineTargetPitch += input.look.y;
@@ -58,7 +44,7 @@ public class ThirdPersonCameraController : MonoBehaviour
 
 
         // Cinemachine will follow this target
-        CinemachineCameraTarget.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + CameraAngleOverride,
+        cameraTarget.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch,
             _cinemachineTargetYaw, 0.0f);
     }
 
@@ -68,5 +54,4 @@ public class ThirdPersonCameraController : MonoBehaviour
         if (lfAngle > 360f) lfAngle -= 360f;
         return Mathf.Clamp(lfAngle, lfMin, lfMax);
     }
-
 }
