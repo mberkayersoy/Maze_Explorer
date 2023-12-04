@@ -1,4 +1,5 @@
-public class OnPlayerDeadEvent 
+
+public class OnPlayerDeadEvent
 {
     public bool IsDead { get; private set; }
     public OnPlayerDeadEvent(bool isDead)

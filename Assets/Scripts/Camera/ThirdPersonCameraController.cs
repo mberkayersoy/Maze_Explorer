@@ -4,7 +4,6 @@ using UnityEngine.Windows;
 
 public class ThirdPersonCameraController : MonoBehaviour
 {
-
     private PlayerInputHandler input;
 
     private const float _threshold = 0.01f;
@@ -28,6 +27,7 @@ public class ThirdPersonCameraController : MonoBehaviour
     // cinemachine
     private float _cinemachineTargetYaw;
     private float _cinemachineTargetPitch;
+
     private void Awake()
     {
         input = GetComponent<PlayerInputHandler>();
